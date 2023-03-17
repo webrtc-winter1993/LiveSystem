@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
 declare interface Window {
-    stream:any
+    stream:any,
+    mozRTCPeerConnection:any,
+    webkitRTCPeerConnection:any,
 }

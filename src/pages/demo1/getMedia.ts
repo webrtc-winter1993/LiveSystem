@@ -82,7 +82,7 @@ export function getLocalDevice(constraints = { video: true, audio: false }) {
  * @param constraints
  * @returns {Promise<MediaStream>}
  */
-const getLocalUserMedia = async (constraints: any) => {
+ export const getLocalUserMedia = async (constraints: any) => {
     return await navigator.mediaDevices.getUserMedia(constraints);
 };
 /**
@@ -117,22 +117,4 @@ export const getTargetDeviceMedia = async (
     return await getLocalUserMedia(constraints).catch(handleError);
 };
 
-/**
- * 获取屏幕分享的媒体流
- * @author suke
- * @returns {Promise<void>}
- */
-export const getShareMedia = async () => {
-    const constraints = {
-        video: { width: 1920, height: 1080 },
-        audio: false,
-    };
-    if (window.stream) {
-        window.stream.getTracks().forEach((track: any) => {
-            track.stop();
-        });
-    }
-    return await navigator.mediaDevices
-        .getDisplayMedia(constraints)
-        .catch(handleError);
-};
+
