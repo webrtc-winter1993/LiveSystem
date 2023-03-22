@@ -15,6 +15,9 @@
     <el-col :span="24">
       <router-link to="/one2many">一对多视频</router-link>
     </el-col>
+    <el-col :span="24">
+      <router-link to="/many2many">多对多视频</router-link>
+    </el-col>
   </el-row>
   <RouterView/>
 </template>

@@ -40,6 +40,16 @@ const routes: Array<RouteRecordRaw> = [
         },
         component: () => import('@/pages/one2many/index.vue')
       },
+      {
+        path: '/many2many',
+        name: 'many2many',
+        meta: {
+            title: 'many2many',
+            keepAlive: true,
+            requireAuth: false
+        },
+        component: () => import('@/pages/many2many/index.vue')
+      },
     ]
     const router = createRouter({
         history: createWebHistory(),
