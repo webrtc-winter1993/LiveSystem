@@ -80,6 +80,7 @@
           >关闭麦克风</el-button
         >
         <el-button @click="showDetails()">stats</el-button>
+        <el-button @click="shareMedia">分享屏幕</el-button>
       </div>
     </el-row>
 
@@ -172,6 +173,7 @@ import { handleError, getParams } from "../demo2/shareMedia";
 import {getLocalDevice} from '../demo1/getMedia'
 import { getLocalUserMedia } from "../demo1/getMedia";
 import { ElMessage, ElNotification, FormInstance, FormRules } from "element-plus";
+import { getShareMedia } from '../demo2/shareMedia'
 const ruleFormRef = ref<FormInstance>();
 getLocalDevice()
 const useDevice = useDeviceStore();
@@ -591,6 +593,36 @@ const calculateReceiverBitrate = (userId: any, pc: any) => {
     state.lastPeerStatsMap.set(userId, res);
   });
 };
+
+/**
+ * 分享屏幕
+ */
+const shareMedia =async () => {
+    const stream:any = await getShareMedia()
+    const [videoTrack] = stream.getVideoTracks();
+    //多个RTC关联
+    state.RtcPcMaps.forEach((e:any) => {
+        const senders = e.getSenders();
+        const send = senders.find((s:any) => s.track.kind === 'video')
+        send.replaceTrack(videoTrack)
+    })
+    onShareEnd(videoTrack)
+}
+/**
+ * 监听共享屏幕结束
+ */
+const onShareEnd = (videoTrack:any) => {
+    videoTrack.onended =()=>{
+        console.log('分享结束')
+        const [videoTrack] = state.localStream.getVideoTracks();
+        console.log('重新发送本地视频流')
+        state.RtcPcMaps.forEach((e:any) => {
+            const senders = e.getSenders();
+            const send = senders.find((s:any) => s.track.kind === 'video')
+            send.replaceTrack(videoTrack)
+        })
+    }
+}
 </script>
 
 <style lang="less" scoped>
@@ -621,7 +653,7 @@ body {
 }
 .frame-videos div {
   border: 1px blueviolet solid;
-  width: 23%;
+  width: 400px;
   height: 200px;
   position: relative;
   background-color: black;
