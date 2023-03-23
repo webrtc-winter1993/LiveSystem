@@ -436,14 +436,17 @@ const removeChildVideoDom = (domId: any) => {
   }
 };
 const setBiterate = async (uid: any) => {
+    //通过用户ID获取关联的Peer实例化对象 当前用户是谁 那么对应用户的画面就会生效 比如A、B、C
+    //三个通话，那么A这边点击 B 的画面此时设置的是B画面的出口宽带，因此在 B 端比特率就会变更。
+    //要全局生效也很简单，就是遍历 RtcPcMaps 中的所有 Peer实例，给予每一个的关联都设置该参数。
   let pcKey = state.formInline.userId + "-" + uid;
   let pc = state.RtcPcMaps.get(pcKey);
   if (pc) {
     let senders = pc.getSenders();
     let sender = senders.find((s: any) => s.track.kind === "video");
     const params = sender.getParameters();
-    //比特率设置
-    let bitrate = 100 * 1000;
+    //比特率设置 100 kbit/s
+    let bitrate = 100 * 1024;
     params.encodings[0].maxBitrate = bitrate;
     //同步参数
     await sender.setParameters(params);
