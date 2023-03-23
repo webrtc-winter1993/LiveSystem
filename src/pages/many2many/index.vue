@@ -26,6 +26,7 @@
             "
           >
             <video
+            ref="localdemo01"
               id="localdemo01"
               @click="getLocalStreamSettings()"
               autoplay
@@ -43,11 +44,12 @@
             <div
               :id="item.userId"
               v-for="(item, index) in state.roomUserList"
-              v-if="state.formInline.userId !== item?.userId"
               :ref="item.userId"
               :key="item.userId"
             >
-              <label>
+              <label
+              v-if="state.formInline.userId !== item?.userId"
+              >
                 {{ item.nickname }}
                 <span style="color: bisque">
                   {{ item.bitrate }}
@@ -167,14 +169,18 @@
 
 <script setup lang="ts">
 import { io } from "socket.io-client";
-import { reactive, ref } from "vue";
+import { reactive, ref,onMounted } from "vue";
 import { useDeviceStore } from "../../store/useDeviceStore";
 import { handleError, getParams } from "../demo2/shareMedia";
 import {getLocalDevice} from '../demo1/getMedia'
-import { getLocalUserMedia } from "../demo1/getMedia";
+import { getLocalUserMedia } from "./getMedia";
 import { ElMessage, ElNotification, FormInstance, FormRules } from "element-plus";
 import { getShareMedia } from '../demo2/shareMedia'
 const ruleFormRef = ref<FormInstance>();
+const localdemo01 = ref<any>(null)
+onMounted(()=>{
+    console.log('localdemo01',localdemo01.value)
+})
 getLocalDevice()
 const useDevice = useDeviceStore();
 console.log(useDevice.localDevice)
@@ -233,8 +239,12 @@ const getLocalStreamSettings = async () => {
 const init = () => {
     //初始化服务器连接
     console.log("1.初始化服务器连接");
-  console.log("server：http://localhost:18080");
-  state.linkSocket = io("http://localhost:18080", {
+  console.log("server：https://192.168.0.27:18080");
+  state.linkSocket = io("https://192.168.0.27:18080", {
+    withCredentials: true,
+    extraHeaders: {
+        "Custom-Header": "xxx"
+    },
     reconnectionDelayMax: 10000,
     transports: ["websocket"],
     query: state.formInline,
@@ -308,7 +318,7 @@ const onCandiDate = (fromUid: any, candidate: any) => {
 const initMeetingRoomPc = async () => {
    
   if (!state.localStream) {
-    state.localStream = await getLocalUserMedia(state.constraintOpt);
+    state.localStream = await getLocalUserMedia(state.formInline);
     //开始静音和关闭摄像头
     // initMediaStatus(state.localStream);
   }
@@ -418,6 +428,7 @@ const initMediaStatus = (stream:any) => {
 const setDomVideoStream = async (domId: any, newStream: any) => {
   let video: any = document.getElementById(domId);
   let stream = video.srcObject;
+  console.log('video',newStream.id)
   if (stream) {
     stream.getAudioTracks().forEach((e: any) => {
       stream.removeTrack(e);
@@ -496,7 +507,7 @@ const createRemoteDomVideoStream = (domId: any, trick: any) => {
     video.style.height = "100%";
   }
   let stream = video.srcObject;
-  console.log("stream==>trick", stream, trick);
+  console.log("stream==>trick", stream, trick.id);
   if (stream) {
     stream.addTrack(trick);
   } else {
@@ -642,9 +653,7 @@ body {
 #localdemo01 {
   width: 300px;
   height: 200px;
-  position: fixed;
-  bottom: 24px;
-  right: 4px;
+
 }
 
 .frame-videos {
