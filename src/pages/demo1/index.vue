@@ -52,7 +52,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <video id="localdemo01" autoplay controls muted></video>
+      <video id="localdemo01" autoplay controls muted playsinline="Booleanish"></video>
     </el-row>
   </div>
 </template>

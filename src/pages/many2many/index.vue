@@ -30,7 +30,9 @@
               id="localdemo01"
               @click="getLocalStreamSettings()"
               autoplay
-              muted
+              :controls="false"
+              playsinline="Booleanish"
+              :muted="false"
             ></video>
             <label style="z-index: 999; position: fixed; right: 25px; bottom: 30px">
               <el-button type="warning" size="" @click="getLocalStreamSettings"
@@ -502,6 +504,7 @@ const createRemoteDomVideoStream = (domId: any, trick: any) => {
     video.id = id;
     video.controls = false;
     video.autoplay = true;
+    video.setAttribute('playsinline','Booleanish')
     video.muted = false;
     video.style.width = "100%";
     video.style.height = "100%";
@@ -514,9 +517,11 @@ const createRemoteDomVideoStream = (domId: any, trick: any) => {
     let newStream = new MediaStream();
     newStream.addTrack(trick);
     video.srcObject = newStream;
+    video.setAttribute('playsinline','Booleanish')
     video.muted = false;
     parentDom.appendChild(video);
   }
+  console.log('video:',video)
 };
 const showDetails = () => {
   console.log(state.localStream);
