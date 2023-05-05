@@ -195,9 +195,9 @@ const state = reactive<any>({
   linkSocket: undefined,
   centerDialogVisible: true,
   rtcPcParams: {
-    // iceTransportPolicy: 'relay', //强制走中继
+    iceTransportPolicy: 'relay', //强制走中继
     iceServers: [
-      // {urls: 'turn:124.70.x.x:3478', username:'suc', credential:'suc001'},
+      {urls: 'turn:192.168.0.3:3478', username:'iswinter', credential:'iswinter1993'},
     ],
   },
   roomUserList: [],
